@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APEX GT-520 — Born to Dominate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:      #C9A84C;
+      --gold-lt:   #E8C96A;
+      --gold-dim:  rgba(201,168,76,0.12);
+      --bg:        #0A0A0A;
+      --surface:   #111111;
+      --surface2:  #161616;
+      --border:    #252525;
+      --text:      #F2F2F2;
+      --muted:     #888888;
+      --muted2:    #444444;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ═══ NAV ═══════════════════════════════════════ */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 70px; padding: 0 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(8,8,8,0.88);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.9rem; letter-spacing: 0.18em;
+      color: var(--gold); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none;
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .btn-nav {
+      background: transparent; color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: .55rem 1.5rem;
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+      transition: all .25s;
+    }
+    .btn-nav:hover { background: var(--gold); color: var(--bg); }
+
+    /* ═══ HERO ═══════════════════════════════════════ */
+    .hero {
+      position: relative; width: 100%; height: 100vh; min-height: 640px;
+      overflow: hidden;
+      background: radial-gradient(ellipse at 65% 55%, #1c1300 0%, var(--bg) 68%);
+    }
+
+    #heroCanvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      display: block;
+    }
+
+    .hero-content {
+      position: absolute;
+      top: 50%; left: 3rem;
+      transform: translateY(-50%);
+      z-index: 10; max-width: 500px;
+    }
+
+    .hero-eye {
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .hero-eye::before {
+      content: ''; display: block;
+      width: 32px; height: 1px; background: var(--gold);
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5.5rem, 10vw, 9.5rem);
+      line-height: .90; color: var(--text);
+      letter-spacing: 0.04em;
+    }
+
+    .hero-model {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+      color: var(--gold); letter-spacing: 0.18em;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-sub {
+      color: var(--muted); font-size: .88rem; line-height: 1.78;
+      max-width: 380px; margin-bottom: 2.5rem;
+    }
+
+    .hero-actions { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+
+    .btn-gold {
+      background: var(--gold); color: var(--bg);
+      border: none; padding: .95rem 2.5rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700; font-size: .72rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      cursor: pointer; transition: all .25s;
+    }
+    .btn-gold:hover { background: var(--gold-lt); transform: translateY(-2px); }
+
+    .btn-outline {
+      background: transparent; color: var(--gold);
+      border: 1px solid var(--gold); padding: .95rem 2.5rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600; font-size: .72rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      cursor: pointer; transition: all .25s;
+    }
+    .btn-outline:hover { background: var(--gold-dim); transform: translateY(-2px); }
+
+    .scroll-hint {
+      position: absolute; bottom: 2rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center;
+      gap: .5rem; z-index: 10;
+    }
+    .scroll-hint span {
+      font-size: .6rem; letter-spacing: .24em;
+      text-transform: uppercase; color: var(--muted2);
+    }
+    .scroll-bar {
+      width: 1px; height: 42px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollAnim 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollAnim {
+      0%,100% { opacity:0; transform:scaleY(0) translateY(-50%); }
+      50%      { opacity:1; transform:scaleY(1) translateY(0); }
+    }
+
+    /* ═══ SPECS ══════════════════════════════════════ */
+    .specs {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 5rem 3rem;
+    }
+    .specs-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4,1fr);
+    }
+    .spec {
+      padding: 2.5rem 2rem;
+      border-right: 1px solid var(--border);
+      opacity: 0; transform: translateY(20px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .spec:last-child { border-right: none; }
+    .spec.vis { opacity:1; transform:translateY(0); }
+
+    .spec-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 5vw, 5rem);
+      color: var(--gold); line-height: 1;
+    }
+    .spec-unit { font-size: .9rem; color: var(--muted); margin-left: .15rem; }
+    .spec-lbl {
+      font-size: .68rem; color: var(--muted);
+      letter-spacing: .18em; text-transform: uppercase;
+      margin-top: .5rem;
+    }
+    .spec-desc { font-size: .78rem; color: var(--muted2); margin-top: .2rem; }
+
+    /* ═══ DESIGN SECTION ═════════════════════════════ */
+    .design { padding: 8rem 3rem; background: var(--bg); }
+    .design-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1.1fr;
+      gap: 6rem; align-items: center;
+    }
+
+    .d-text {
+      opacity: 0; transform: translateX(-24px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .d-text.vis { opacity:1; transform:translateX(0); }
+
+    .eyebrow {
+      font-size: .66rem; font-weight: 700;
+      letter-spacing: .22em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: .9rem;
+    }
+    .sec-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+      font-weight: 900; line-height: 1.1;
+      color: var(--text); margin-bottom: 1.2rem;
+    }
+    .sec-body {
+      color: var(--muted); font-size: .9rem; line-height: 1.82;
+      margin-bottom: 2.5rem;
+    }
+    .gold-rule { width: 50px; height: 2px; background: var(--gold); }
+
+    .d-cards {
+      display: flex; flex-direction: column; gap: 1px;
+      opacity: 0; transform: translateX(24px);
+      transition: opacity .6s ease .2s, transform .6s ease .2s;
+    }
+    .d-cards.vis { opacity:1; transform:translateX(0); }
+
+    .d-card {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 1.8rem 2rem;
+      display: flex; gap: 1.5rem; align-items: flex-start;
+      transition: border-color .25s, background .25s, transform .3s;
+      transform: perspective(800px) rotateX(0deg);
+    }
+    .d-card:hover {
+      border-color: var(--gold); background: var(--surface2);
+      transform: perspective(800px) rotateX(-3deg);
+    }
+    .d-icon {
+      width: 42px; height: 42px; flex-shrink: 0;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); font-size: 1.1rem;
+      transition: border-color .25s;
+    }
+    .d-card:hover .d-icon { border-color: var(--gold); }
+    .d-card-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700; font-size: .9rem; color: var(--text);
+      margin-bottom: .3rem; letter-spacing: .02em;
+    }
+    .d-card-desc { font-size: .8rem; color: var(--muted); line-height: 1.65; }
+
+    /* ═══ PERFORMANCE ════════════════════════════════ */
+    .perf {
+      padding: 8rem 3rem;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .perf-inner { max-width: 1200px; margin: 0 auto; }
+    .perf-head { margin-bottom: 4rem; }
+
+    .perf-list { display: flex; flex-direction: column; gap: 2.5rem; }
+
+    .perf-item {
+      opacity: 0; transform: translateX(-20px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .perf-item.vis { opacity:1; transform:translateX(0); }
+
+    .perf-row {
+      display: flex; justify-content: space-between;
+      align-items: baseline; margin-bottom: .9rem;
+    }
+    .perf-name {
+      font-size: .72rem; letter-spacing: .16em;
+      text-transform: uppercase; color: var(--text); font-weight: 500;
+    }
+    .perf-figure {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem; color: var(--gold);
+    }
+    .perf-track {
+      height: 1px; background: var(--border);
+      position: relative; overflow: visible;
+    }
+    .perf-fill {
+      height: 1px; width: 0;
+      background: linear-gradient(90deg, var(--gold), var(--gold-lt));
+      transition: width 1.5s cubic-bezier(.22,1,.36,1);
+      position: relative;
+    }
+    .perf-fill::after {
+      content: '';
+      position: absolute; right: -4px; top: -4px;
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--gold-lt);
+      box-shadow: 0 0 12px var(--gold), 0 0 4px var(--gold-lt);
+    }
+
+    /* ═══ CTA ════════════════════════════════════════ */
+    .cta-sec {
+      padding: 10rem 3rem;
+      background: var(--bg);
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-ghost {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(8rem, 22vw, 20rem);
+      color: rgba(201,168,76,0.025);
+      letter-spacing: .08em; pointer-events: none;
+      white-space: nowrap; user-select: none;
+    }
+    .cta-inner { position: relative; z-index: 2; }
+    .cta-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 900; color: var(--text);
+      line-height: 1.1; margin-bottom: 1.25rem;
+    }
+    .cta-sub {
+      color: var(--muted); font-size: .95rem;
+      max-width: 480px; margin: 0 auto 3rem;
+      line-height: 1.78;
+    }
+
+    /* ═══ FOOTER ═════════════════════════════════════ */
+    .footer { background: #000; padding: 3rem; border-top: 1px solid var(--border); }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 1.5rem;
+    }
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem; letter-spacing: .16em; color: var(--gold);
+    }
+    .footer-links { display: flex; gap: 2rem; list-style: none; }
+    .footer-links a {
+      color: var(--muted2); text-decoration: none;
+      font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-size: .7rem; color: var(--muted2); letter-spacing: .05em; }
+
+    /* ═══ RESPONSIVE ═════════════════════════════════ */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .hero-content { left: 1.5rem; max-width: calc(100% - 3rem); }
+      .specs-inner { grid-template-columns: repeat(2,1fr); }
+      .spec { border-right: none; border-bottom: 1px solid var(--border); }
+      .spec:nth-child(odd) { border-right: 1px solid var(--border); }
+      .design-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-inner { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .hero-title { font-size: 4.5rem; }
+      .specs-inner { grid-template-columns: 1fr; }
+      .spec:nth-child(odd) { border-right: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════ NAV ══════════════════ -->
+<nav class="nav">
+  <a href="#" class="nav-logo">APEX</a>
+  <ul class="nav-links">
+    <li><a href="#design">Design</a></li>
+    <li><a href="#performance">Performance</a></li>
+    <li><a href="#specs">Especificações</a></li>
+  </ul>
+  <button class="btn-nav">Configurar</button>
+</nav>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="hero">
+  <canvas id="heroCanvas"></canvas>
+
+  <div class="hero-content">
+    <div class="hero-eye">Supercar Premium</div>
+    <h1 class="hero-title">APEX</h1>
+    <div class="hero-model">GT — 520</div>
+    <p class="hero-sub">
+      Engenharia sem concessões. Cada detalhe esculpido para dominar
+      a pista e redefinir o que significa dirigir.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-gold">Configurar</button>
+      <button class="btn-outline">Ver Specs</button>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-bar"></div>
+  </div>
+</section>
+
+<!-- ══════════════════ SPECS ══════════════════ -->
+<section class="specs" id="specs">
+  <div class="specs-inner">
+    <div class="spec">
+      <div class="spec-val">2.8<span class="spec-unit">s</span></div>
+      <div class="spec-lbl">0 — 100 km/h</div>
+      <div class="spec-desc">Aceleração brutal do zero</div>
+    </div>
+    <div class="spec">
+      <div class="spec-val">720<span class="spec-unit">cv</span></div>
+      <div class="spec-lbl">Potência máxima</div>
+      <div class="spec-desc">Motor V8 twin-turbo</div>
+    </div>
+    <div class="spec">
+      <div class="spec-val">340<span class="spec-unit">km/h</span></div>
+      <div class="spec-lbl">Velocidade máxima</div>
+      <div class="spec-desc">Limitador eletrônico</div>
+    </div>
+    <div class="spec">
+      <div class="spec-val">1.32<span class="spec-unit">t</span></div>
+      <div class="spec-lbl">Peso total</div>
+      <div class="spec-desc">Chassi em fibra de carbono</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ DESIGN ══════════════════ -->
+<section class="design" id="design">
+  <div class="design-inner">
+    <div class="d-text" id="dText">
+      <div class="eyebrow">Filosofia de Design</div>
+      <h2 class="sec-title">Cada detalhe,<br>intencional.</h2>
+      <p class="sec-body">
+        O GT-520 não foi projetado para impressionar em stands de exposição.
+        Foi construído para ser sentido a 300 km/h — onde cada curva de carroceria
+        tem propósito aerodinâmico e cada superfície é funcional antes de ser bela.
+      </p>
+      <div class="gold-rule"></div>
+    </div>
+
+    <div class="d-cards" id="dCards">
+      <div class="d-card">
+        <div class="d-icon">◈</div>
+        <div>
+          <div class="d-card-title">Aerodinâmica Ativa</div>
+          <div class="d-card-desc">Difusor dianteiro e asa traseira com ajuste automático em função da velocidade. 380 kg de downforce a 250 km/h.</div>
+        </div>
+      </div>
+      <div class="d-card">
+        <div class="d-icon">⬡</div>
+        <div>
+          <div class="d-card-title">Monocoque em Carbono</div>
+          <div class="d-card-desc">Chassi integral em fibra de carbono de alta resistência. Rigidez torsional de 40.000 Nm/grau com peso de apenas 82 kg.</div>
+        </div>
+      </div>
+      <div class="d-card">
+        <div class="d-icon">◎</div>
+        <div>
+          <div class="d-card-title">Freios de Cerâmica</div>
+          <div class="d-card-desc">Discos carbono-cerâmicos de 420mm. Resistência a 1.200°C sem fade. Desgaste 75% menor que discos de aço convencionais.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ PERFORMANCE ══════════════════ -->
+<section class="perf" id="performance">
+  <div class="perf-inner">
+    <div class="perf-head">
+      <div class="eyebrow">Números que definem</div>
+      <h2 class="sec-title">Performance sem compromisso</h2>
+    </div>
+    <div class="perf-list">
+      <div class="perf-item">
+        <div class="perf-row">
+          <span class="perf-name">Potência</span>
+          <span class="perf-figure">720 cv</span>
+        </div>
+        <div class="perf-track"><div class="perf-fill" data-w="92"></div></div>
+      </div>
+      <div class="perf-item">
+        <div class="perf-row">
+          <span class="perf-name">Torque</span>
+          <span class="perf-figure">850 Nm</span>
+        </div>
+        <div class="perf-track"><div class="perf-fill" data-w="88"></div></div>
+      </div>
+      <div class="perf-item">
+        <div class="perf-row">
+          <span class="perf-name">Velocidade Máxima</span>
+          <span class="perf-figure">340 km/h</span>
+        </div>
+        <div class="perf-track"><div class="perf-fill" data-w="85"></div></div>
+      </div>
+      <div class="perf-item">
+        <div class="perf-row">
+          <span class="perf-name">Downforce</span>
+          <span class="perf-figure">380 kg</span>
+        </div>
+        <div class="perf-track"><div class="perf-fill" data-w="76"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ CTA ══════════════════ -->
+<section class="cta-sec">
+  <div class="cta-ghost" aria-hidden="true">GT520</div>
+  <div class="cta-inner">
+    <div class="eyebrow" style="margin-bottom:1.5rem;">Pronto para o próximo nível?</div>
+    <h2 class="cta-title">Configure o seu<br>APEX GT-520.</h2>
+    <p class="cta-sub">
+      Escolha sua cor, interior e pacotes de performance.
+      Entrega estimada em 18 semanas a partir da confirmação do pedido.
+    </p>
+    <div style="display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;">
+      <button class="btn-gold">Iniciar Configuração</button>
+      <button class="btn-outline">Agendar Test Drive</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-logo">APEX</div>
+    <ul class="footer-links">
+      <li><a href="#design">Design</a></li>
+      <li><a href="#performance">Performance</a></li>
+      <li><a href="#">Concessionárias</a></li>
+      <li><a href="#">Contato</a></li>
+    </ul>
+    <p class="footer-copy">© 2025 Apex Motors. Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   THREE.JS — APEX GT-520 3D CAR
+══════════════════════════════════════════════════════ */
+(function () {
+  const canvas = document.getElementById('heroCanvas');
+  const W = () => canvas.clientWidth;
+  const H = () => canvas.clientHeight;
+
+  // ── Scene
+  const scene = new THREE.Scene();
+
+  // ── Camera
+  const camera = new THREE.PerspectiveCamera(38, W() / H(), 0.1, 100);
+  camera.position.set(6.2, 2.6, 7.5);
+  camera.lookAt(-0.4, 0.75, 0);
+
+  // ── Renderer
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(W(), H(), false);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  // ── Lights
+  scene.add(new THREE.AmbientLight(0x111122, 1.0));
+
+  // Key light — gold, front-left above
+  const key = new THREE.PointLight(0xC9A84C, 5.5, 30);
+  key.position.set(-5, 6, 5);
+  key.castShadow = true;
+  scene.add(key);
+
+  // Fill light — cool blue, right-rear
+  const fill = new THREE.PointLight(0x3355CC, 2.0, 22);
+  fill.position.set(6, 3, -3);
+  scene.add(fill);
+
+  // Rim light — warm gold, directly behind
+  const rim = new THREE.PointLight(0xE8C96A, 3.0, 20);
+  rim.position.set(0, 4, -7);
+  scene.add(rim);
+
+  // Under-car glow — faint gold
+  const bounce = new THREE.PointLight(0xC9A84C, 0.5, 8);
+  bounce.position.set(0, -1.5, 0);
+  scene.add(bounce);
+
+  // Top overhead
+  const top = new THREE.DirectionalLight(0xFFEECC, 0.8);
+  top.position.set(0, 10, 0);
+  scene.add(top);
+
+  // ── Materials
+  const body = new THREE.MeshStandardMaterial({ color: 0xB0B4B8, metalness: 0.93, roughness: 0.11 });
+  const glass = new THREE.MeshStandardMaterial({ color: 0x05050E, metalness: 0.55, roughness: 0.0, transparent: true, opacity: 0.82 });
+  const tire  = new THREE.MeshStandardMaterial({ color: 0x0D0D0D, metalness: 0.0, roughness: 0.92 });
+  const gold  = new THREE.MeshStandardMaterial({ color: 0xC9A84C, metalness: 1.0, roughness: 0.06 });
+  const dark  = new THREE.MeshStandardMaterial({ color: 0x080808, metalness: 0.2, roughness: 0.85 });
+
+  const headMat = new THREE.MeshStandardMaterial({
+    color: 0xFFFFEE, emissive: 0xFFCC44, emissiveIntensity: 3.5,
+    metalness: 0.4, roughness: 0.1
+  });
+  const tailMat = new THREE.MeshStandardMaterial({
+    color: 0xFF1100, emissive: 0xFF0000, emissiveIntensity: 2.2,
+    metalness: 0.3, roughness: 0.1
+  });
+
+  // ── Helper
+  const car = new THREE.Group();
+  function box(w, h, d, mat, x, y, z, rx = 0) {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+    m.position.set(x, y, z);
+    m.rotation.x = rx;
+    m.castShadow = true;
+    m.receiveShadow = true;
+    car.add(m);
+    return m;
+  }
+
+  // ── LOWER BODY
+  box(2.44, 0.38, 5.00, body,  0, 0.56,  0);       // main lower body
+  box(2.70, 0.19, 4.72, body,  0, 0.40,  0);       // side sills
+  box(2.20, 0.09, 1.75, body,  0, 0.77,  1.55);    // hood top
+  box(2.05, 0.09, 0.95, body,  0, 0.77, -1.95);    // trunk deck
+
+  // ── FRONT & REAR FASCIA
+  box(2.38, 0.38, 0.18, body,  0,  0.40,  2.51);   // front lower bumper
+  box(2.20, 0.52, 0.18, body,  0,  0.60,  2.51);   // front upper fascia
+  box(1.42, 0.22, 0.07, dark,  0,  0.38,  2.55);   // grille
+  box(2.20, 0.50, 0.18, body,  0,  0.60, -2.51);   // rear panel
+  box(2.10, 0.22, 0.18, dark,  0,  0.24, -2.51);   // diffuser
+
+  // ── CABIN
+  box(1.95, 0.63, 2.32, body,  0,  1.07, -0.18);   // cabin shell
+
+  // ── WINDOWS
+  const wnd = new THREE.Mesh(new THREE.BoxGeometry(1.82, 0.52, 0.07), glass);
+  wnd.position.set(0, 0.99, 0.88); wnd.rotation.x = -0.34;
+  wnd.castShadow = true; car.add(wnd);
+
+  const rwnd = new THREE.Mesh(new THREE.BoxGeometry(1.72, 0.44, 0.07), glass);
+  rwnd.position.set(0, 0.95, -1.26); rwnd.rotation.x = 0.32;
+  rwnd.castShadow = true; car.add(rwnd);
+
+  box(0.06, 0.34, 1.62, glass, -0.985, 1.04, -0.18); // side L
+  box(0.06, 0.34, 1.62, glass,  0.985, 1.04, -0.18); // side R
+
+  // ── LIGHTS
+  box(0.62, 0.09, 0.06, headMat, -0.74, 0.65,  2.54);
+  box(0.62, 0.09, 0.06, headMat,  0.74, 0.65,  2.54);
+  box(0.40, 0.04, 0.05, headMat, -0.68, 0.54,  2.54); // DRL L
+  box(0.40, 0.04, 0.05, headMat,  0.68, 0.54,  2.54); // DRL R
+
+  box(0.72, 0.11, 0.06, tailMat, -0.65, 0.72, -2.54);
+  box(0.72, 0.11, 0.06, tailMat,  0.65, 0.72, -2.54);
+
+  // ── SPOILER
+  box(2.12, 0.09, 0.58, body,  0, 1.55, -2.15);    // wing blade
+  box(0.07, 0.27, 0.58, body, -1.05, 1.42, -2.15); // end plate L
+  box(0.07, 0.27, 0.58, body,  1.05, 1.42, -2.15); // end plate R
+  box(0.09, 0.30, 0.09, body, -0.68, 1.30, -2.15); // strut L
+  box(0.09, 0.30, 0.09, body,  0.68, 1.30, -2.15); // strut R
+
+  // ── MIRRORS
+  box(0.24, 0.09, 0.14, body, -1.34, 0.92, 0.60);
+  box(0.24, 0.09, 0.14, body,  1.34, 0.92, 0.60);
+
+  // ── WHEELS
+  [
+    { x: -1.28, z:  1.65 }, // FL
+    { x:  1.28, z:  1.65 }, // FR
+    { x: -1.28, z: -1.58 }, // RL
+    { x:  1.28, z: -1.58 }, // RR
+  ].forEach(({ x, z }) => {
+    const cy = 0.42; // wheel center Y
+
+    // Tire
+    const tireGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.28, 28);
+    const t = new THREE.Mesh(tireGeo, tire);
+    t.rotation.z = Math.PI / 2;
+    t.position.set(x, cy, z);
+    t.castShadow = true;
+    car.add(t);
+
+    // Rim ring
+    const rimGeo = new THREE.CylinderGeometry(0.31, 0.31, 0.30, 22);
+    const r = new THREE.Mesh(rimGeo, gold);
+    r.rotation.z = Math.PI / 2;
+    r.position.set(x, cy, z);
+    car.add(r);
+
+    // Center cap
+    const capGeo = new THREE.CylinderGeometry(0.07, 0.07, 0.32, 12);
+    const c = new THREE.Mesh(capGeo, gold);
+    c.rotation.z = Math.PI / 2;
+    c.position.set(x, cy, z);
+    car.add(c);
+
+    // 5 spokes — rotate box around X (wheel axis after Z rot)
+    for (let i = 0; i < 5; i++) {
+      const a = (i / 5) * Math.PI * 2;
+      const s = new THREE.Mesh(
+        new THREE.BoxGeometry(0.29, 0.04, 0.54),
+        gold
+      );
+      s.position.set(x, cy, z);
+      s.rotation.x = a;
+      car.add(s);
+    }
+  });
+
+  // ── GROUND PLANE (reflective)
+  const gnd = new THREE.Mesh(
+    new THREE.PlaneGeometry(22, 22),
+    new THREE.MeshStandardMaterial({ color: 0x080808, metalness: 0.75, roughness: 0.28 })
+  );
+  gnd.rotation.x = -Math.PI / 2;
+  gnd.receiveShadow = true;
+  scene.add(gnd);
+
+  // ── Subtle ground glow under car
+  const glowGeo = new THREE.PlaneGeometry(3.5, 6.0);
+  const glowMat = new THREE.MeshBasicMaterial({
+    color: 0xC9A84C, transparent: true, opacity: 0.04
+  });
+  const glow = new THREE.Mesh(glowGeo, glowMat);
+  glow.rotation.x = -Math.PI / 2;
+  glow.position.y = 0.01;
+  scene.add(glow);
+
+  scene.add(car);
+
+  // ── MOUSE PARALLAX
+  let targetY = 0, currY = 0;
+
+  window.addEventListener('mousemove', e => {
+    targetY = ((e.clientX / window.innerWidth) - 0.5) * 0.45;
+  });
+
+  // ── RESIZE
+  function resize() {
+    const w = W(), h = H();
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h, false);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // ── ANIMATE
+  let t = 0;
+  (function loop() {
+    requestAnimationFrame(loop);
+    t += 0.004;
+    currY += (targetY - currY) * 0.04;
+    car.rotation.y = t + currY;
+    // Subtle vertical bob
+    car.position.y = Math.sin(t * 0.8) * 0.018;
+    renderer.render(scene, camera);
+  })();
+
+})();
+
+/* ══════════════════════════════════════════════════════
+   INTERSECTION OBSERVER — scroll reveals
+══════════════════════════════════════════════════════ */
+let perfDone = false;
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(({ target, isIntersecting }) => {
+    if (!isIntersecting) return;
+
+    if (target.classList.contains('spec') ||
+        target.classList.contains('perf-item')) {
+      target.classList.add('vis');
+
+      // Trigger performance bars
+      if (target.classList.contains('perf-item') && !perfDone) {
+        perfDone = true;
+        document.querySelectorAll('.perf-fill').forEach(bar => {
+          bar.style.width = bar.dataset.w + '%';
+        });
+      }
+    }
+
+    if (target.id === 'dText')  { target.classList.add('vis'); }
+    if (target.id === 'dCards') { target.classList.add('vis'); }
+
+    obs.unobserve(target);
+  });
+}, { threshold: 0.18 });
+
+document.querySelectorAll('.spec, .perf-item').forEach(el => obs.observe(el));
+obs.observe(document.getElementById('dText'));
+obs.observe(document.getElementById('dCards'));
+</script>
+</body>
+</html>
